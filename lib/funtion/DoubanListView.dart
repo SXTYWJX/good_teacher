@@ -45,7 +45,7 @@ class DouBanState extends State<DouBanListView> {
   getListViewContainer() {
     if (subjects.length == 0) {
       //loading
-      return CupertinoActivityIndicator();
+      return Center(child: CupertinoActivityIndicator());
     }
     return ListView.builder(
       //item 的数量

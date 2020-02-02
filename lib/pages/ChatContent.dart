@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:good_teacher/FakeInfo.dart';
+import 'package:good_teacher/funtion/RobotAssistant.dart';
 import 'package:good_teacher/model/UserModel.dart';
 
 class ChatContent extends StatefulWidget{
@@ -36,26 +37,45 @@ class _ChatContentState extends State<ChatContent>{
       appBar: AppBar(
         title: Text("${widget.chatWithWhom.userID}"),
       ),
-      body: ListView.builder(
-          itemCount: FakeInfo.chatContentWithRobot.length,
-          itemBuilder: (BuildContext context, int index){
-            return ChatRow(sender: UserModel.fromJson(FakeInfo.chatContentWithRobot[index]["sender"]),content: FakeInfo.chatContentWithRobot[index]["content"]);
-          }
+      body: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(image: AssetImage("assets/chat_background.jpg"), fit: BoxFit.fill)
+        ),
+        child: ListView.builder(
+              itemCount: FakeInfo.chatContentWithRobot.length,
+              itemBuilder: (BuildContext context, int index){
+                return ChatRow(sender: UserModel.fromJson(FakeInfo.chatContentWithRobot[index]["sender"]),content: FakeInfo.chatContentWithRobot[index]["content"]);
+              }
+          ),
       ),
+
       bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+    image: DecorationImage(image: AssetImage("assets/ocean.jpg"), fit: BoxFit.fill)
+    ),
         width: MediaQuery.of(context).size.width,
         height: 123,
         child: Row(
           children: <Widget>[
-            Container(
-              width: 4/5*MediaQuery.of(context).size.width,
-              child: TextField(
-
-                  controller: _textEditingController
+            SingleChildScrollView(
+              child: Container(
+                width: 4/5*MediaQuery.of(context).size.width,
+                child: TextField(
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: BorderSide(width: 100.0)
+                      ),
+                    ),
+                    controller: _textEditingController
+                ),
               ),
             ),
             Expanded(
               child: RaisedButton(
+                padding: EdgeInsets.only(left: 10),
+                color: Colors.green,
                 child: Text("发送", style: TextStyle(fontSize: 18)),
                 onPressed: (){
                   if(_textEditingController.text==null || _textEditingController.text=="")return;
@@ -71,6 +91,23 @@ class _ChatContentState extends State<ChatContent>{
                         "content": "$msgToBeSent"
                       }
                   );
+                  if(widget.chatWithWhom.userID.compareTo("robot123")==0){
+                    RobotAssistant x=new RobotAssistant();
+                    String response = x.replyToUser(msgToBeSent);
+                    if(response!=null){
+                      FakeInfo.chatContentWithRobot.add(
+                          {
+                            "sender": {
+                              "userID":"robot123",
+                              "nickName": "助教小帮手",
+                              "avatarURL": "assets/robot.jpg",
+                              "isMale": true
+                            },
+                            "content": "$response"
+                          }
+                      );
+                    }
+                  }
                   setState(() {
                     _textEditingController.text="";
 
@@ -111,15 +148,7 @@ class ChatRow extends StatelessWidget{
                     borderRadius: BorderRadius.circular(devWidth/75)
                 ),
               ),
-              Transform.rotate(
-                  angle: pi,
-                  child: Container(
-                    padding: EdgeInsets.only(top: 1),
-                    child: CustomPaint(
-                      painter: ChatBoxContainer(width: devWidth/50, height: devHeight/100, color: Colors.yellow),
-                    ),
-                  )
-              ),
+
               Container(
                   padding: EdgeInsets.only(left: devWidth/100),
                   child: CircleAvatar(child: Image.asset(sender.avatarURL, fit: BoxFit.fill))
@@ -130,13 +159,6 @@ class ChatRow extends StatelessWidget{
           Container(
               padding: EdgeInsets.only(right: devWidth/100),
               child: CircleAvatar(child: Image.asset(sender.avatarURL, fit: BoxFit.fill))
-          ),
-
-          Container(
-            padding: EdgeInsets.only(top: 1),
-            child: CustomPaint(
-              painter: ChatBoxContainer(width: devWidth/50, height: devHeight/100, color: Colors.yellow),
-            ),
           ),
 
           Container(

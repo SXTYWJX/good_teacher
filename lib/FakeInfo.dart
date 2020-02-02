@@ -91,9 +91,10 @@ abstract class FakeInfo{
         "avatarURL": "assets/robot.jpg",
         "isMale": true
       },
-      "content": "有什么能帮到您吗？"
+      "content": "有什么能帮到您的吗？\n"
+                 "输入1, 告知星期数"
     },
-    {
+   /* {
       "sender": {
         "userID": "abcdefgh",
         "nickName" : "小小斗士",
@@ -101,6 +102,6 @@ abstract class FakeInfo{
         "isMale": true
       },
       "content": "are you okay？"
-    },
+    },*/
   ];
 }
